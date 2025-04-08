@@ -1,0 +1,19 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-pedantic",
+      "-I",
+      "../munit",
+      "-o",
+      "../bin/munit",
+      "main.c"
+    ],
+    "directory": "/Users/niklas/git/cgarbage/refcounting",
+    "file": "/Users/niklas/git/cgarbage/refcounting/main.c",
+    "output": "/Users/niklas/git/cgarbage/bin/munit"
+  }
+]
