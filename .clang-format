@@ -1,0 +1,26 @@
+---
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 80
+AllowAllParametersOfDeclarationOnNextLine: false
+SpaceBeforeParens: ControlStatements
+BreakBeforeBraces: Allman
+AllowShortIfStatementsOnASingleLine: false
+BinPackArguments: false
+BinPackParameters: false
+SpacesInParentheses: false
+SpacesInAngles: false
+SpaceAfterCStyleCast: false
+Cpp11BracedListStyle: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignEscapedNewlines: Left
+AlignTrailingComments: true
+CommentPragmas: '^IWYU pragma:.*'
+MaxEmptyLinesToKeep: 1
+KeepEmptyLinesAtTheStartOfBlocks: false
+BreakConstructorInitializers: AfterColon

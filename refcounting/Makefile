@@ -1,16 +1,38 @@
-CC=gcc
-CFLAGS=-Wall -Wextra -pedantic
-CPRGS=muint
-BIN=../bin
-LIBS=-I ../munit
+# Compiler and flags
+CC = gcc
+CFLAGS = -Wall -Wextra -g -I../munit
 
-all: test munit
+# Source files
+SRCS = main.c snekobject.c
+BINS = ../bin/
 
-munit: main.c filler.h snekobject.c snekobject.h
-	gcc $< $(CFLAGS) -o $(BIN)/$@ $(LIBS)
+# Object files
+OBJS = $(SRCS:.c=.o)
 
-.PHONY: test
+# Executable name
+TARGET = refcount_app
 
-test: munit
-	./$BIN/munit
+# Path to munit library
+MUNIT_PATH = ../munit
 
+# Munit object file
+MUNIT_OBJ = $(MUNIT_PATH)/munit.o
+
+# Default rule
+all: $(TARGET)
+
+# Rule to create the executable
+$(TARGET): $(OBJS) $(MUNIT_OBJ)
+	$(CC) $(CFLAGS) -o $(BINS)$(TARGET) $(OBJS) $(MUNIT_OBJ)
+
+# Rule to compile .c files to .o files
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Rule to compile munit.c to munit.o
+$(MUNIT_OBJ): $(MUNIT_PATH)/munit.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Clean rule
+clean:
+	rm -f $(OBJS) $(TARGET) $(MUNIT_OBJ)
