@@ -4,6 +4,85 @@
 #include "munit.h"
 #include "snekobject.h"
 
+MunitResult test_array_set(const MunitParameter* pointer, void* key)
+{
+    snek_object_t* foo = new_snek_integer(1);
+
+    snek_object_t* array = new_snek_array(1);
+    snek_array_set(array, 0, foo);
+    munit_assert_int(foo->refcount, ==, 2);
+
+    refcount_dec(foo);
+    refcount_dec(array);
+    return MUNIT_OK;
+}
+
+MunitResult test_array_free(const MunitParameter* pointer, void* key)
+{
+    snek_object_t* foo = new_snek_integer(1);
+    snek_object_t* bar = new_snek_integer(2);
+    snek_object_t* baz = new_snek_integer(3);
+
+    snek_object_t* array = new_snek_array(2);
+    snek_array_set(array, 0, foo);
+    snek_array_set(array, 1, bar);
+    munit_assert_int(foo->refcount, ==, 2);
+    munit_assert_int(bar->refcount, ==, 2);
+    munit_assert_int(baz->refcount, ==, 1);
+
+    // `foo` is stil referenced in the `array`, so it should not be freed.
+    refcount_dec(foo);
+
+    // Overwrite index 0, which is `foo`, with `baz`.
+    //  Now `foo` is not referenced by `array`, so it should be freed.
+    snek_array_set(array, 0, baz);
+
+    refcount_dec(bar);
+    refcount_dec(baz);
+    refcount_dec(array);
+    return MUNIT_OK;
+}
+
+MunitResult test_vector3_refcounting(const MunitParameter* pointer, void* key)
+{
+    snek_object_t* foo = new_snek_integer(1);
+    snek_object_t* bar = new_snek_integer(2);
+    snek_object_t* baz = new_snek_integer(3);
+
+    snek_object_t* vec = new_snek_vector3(foo, bar, baz);
+    munit_assert_int(foo->refcount, ==, 2);
+    munit_assert_int(bar->refcount, ==, 2);
+    munit_assert_int(baz->refcount, ==, 2);
+
+    // `foo` is stil referenced in the `vec`, so it should not be freed.
+    refcount_dec(foo);
+
+    refcount_dec(vec);
+
+    // These are still alive, they have the original reference still.
+
+    // Decrement the last reference to the objects, so they will be freed.
+    refcount_dec(bar);
+    refcount_dec(baz);
+
+    return MUNIT_OK;
+}
+
+MunitResult test_vector3_refcounting_same(const MunitParameter* pointer,
+                                          void*                 key)
+{
+    snek_object_t* foo = new_snek_integer(1);
+
+    snek_object_t* vec = new_snek_vector3(foo, foo, foo);
+    munit_assert_int(foo->refcount, ==, 4);
+
+    // `foo` is stil referenced in the `vec`, so it should not be freed.
+    refcount_dec(foo);
+
+    refcount_dec(vec);
+    return MUNIT_OK;
+}
+
 MunitResult test_inc_refcount(const MunitParameter* pointer, void* key)
 {
     snek_object_t* obj = new_snek_integer(10);
@@ -111,6 +190,8 @@ int main(void)
         munit_test("/dec_refcount", test_dec_refcount),
         munit_test("/free_refcount", test_refcount_free_is_called),
         munit_test("/string_freed", test_allocated_string_is_freed),
+        munit_test("/vector3", test_vector3_refcounting),
+        munit_test("/vector3-same", test_vector3_refcounting_same),
         munit_null_test,
     };
 
