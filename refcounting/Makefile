@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -g -I../munit
+CFLAGS = -fsanitize=address -Wall -Wextra -g -I../munit
 
 # Source files
 SRCS = main.c snekobject.c

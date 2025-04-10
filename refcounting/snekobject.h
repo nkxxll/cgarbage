@@ -50,3 +50,5 @@ snek_object_t* new_snek_vector3(snek_object_t* x,
 snek_object_t* new_snek_array(size_t size);
 
 void refcount_inc(snek_object_t* obj);
+void refcount_dec(snek_object_t* obj);
+void refcount_free(snek_object_t* obj);

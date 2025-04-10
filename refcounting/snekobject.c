@@ -1,7 +1,39 @@
 #include "snekobject.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+void refcount_dec(snek_object_t* obj)
+{
+    if (obj == NULL)
+    {
+        return;
+    }
+
+    obj->refcount--;
+    if (obj->refcount == 0)
+    {
+        refcount_free(obj);
+    }
+}
+
+void refcount_free(snek_object_t* obj)
+{
+    switch (obj->kind)
+    {
+        case INTEGER:
+        case FLOAT:
+            free(obj);
+            break;
+        case STRING:
+            free(obj->data.v_string);
+            free(obj);
+            break;
+        default:
+            return;
+    }
+}
 
 void refcount_inc(snek_object_t* obj)
 {
