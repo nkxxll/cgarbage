@@ -174,35 +174,30 @@ void refcount_free(snek_object_t* obj)
     {
         case INTEGER:
         case FLOAT:
-            free(obj);
             break;
         case STRING:
-        {
             free(obj->data.v_string);
-            free(obj);
             break;
-        }
         case VECTOR3:
         {
-            refcount_dec(obj->data.v_vector3.x);
-            refcount_dec(obj->data.v_vector3.y);
-            refcount_dec(obj->data.v_vector3.z);
-            refcount_free(obj);
+            snek_vector_t vec = obj->data.v_vector3;
+            refcount_dec(vec.x);
+            refcount_dec(vec.y);
+            refcount_dec(vec.z);
             break;
         }
         case ARRAY:
         {
-            snek_array_t array = obj->data.v_array;
-            for (size_t i = 0; i < array.size; i++)
+            snek_array_t* array = &obj->data.v_array;
+            for (size_t i = 0; i < array->size; i++)
             {
-                refcount_dec(array.elements[i]);
+                refcount_dec(array->elements[i]);
             }
-            free(array.elements);
+            free(array->elements);
             break;
         }
-        default:
-            return;
     }
+    free(obj);
 }
 
 void refcount_inc(snek_object_t* obj)
